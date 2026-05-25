@@ -1,6 +1,6 @@
-# The benefits of full data shuffle, now with optimal I/O cost
+# The benefits of full data shuffle, now with optimal I/O cost: k-wise independence and matrix transposition to the rescue
 
-This repository contains the Python code and saved experiment output for the
+This repository contains the C++ and Python code along with saved experiment output for the ICML 2026
 paper's shuffle comparison experiment.
 
 Repository layout:
@@ -59,5 +59,6 @@ Implemented algorithms:
 
 - `Gen-2-Wise-Ind-Perm` from Algorithm 1
 - `IO Shuffle` from Algorithm 2, for one or two rounds
-- `CorgiPile` baseline
+- `CorgiPile` shuffle algorithm of Xu et al: https://doi.
+org/10.1007/s00778-024-00845-0
 - `Fisher-Yates` uniform shuffle baseline
