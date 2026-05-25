@@ -8,7 +8,7 @@ Repository layout:
 ```text
 main.py                            Top-level runner for Python or C++ backends
 python/run_experiment.py           Python experiment runner and result printer
-python/shuffle_functions/          One Python file per shuffle algorithm
+python/shuffle_core.py             Python shuffle implementations
 cpp/run_experiment.py              C++ accelerated experiment runner
 cpp/shuffle_core.cpp               C++ implementations used by the runner
 twoWiseExp_counts_B400.csv         Saved data summarized in Table 2

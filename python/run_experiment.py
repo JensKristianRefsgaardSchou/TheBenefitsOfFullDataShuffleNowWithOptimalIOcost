@@ -7,10 +7,10 @@ from collections import Counter
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from time import time
 
-from shuffle_functions import corgi_pile
-from shuffle_functions import fisher_yates
-from shuffle_functions import gen_2_wise_ind_perm
-from shuffle_functions import io_shuffle
+from shuffle_core import corgi_pile
+from shuffle_core import fisher_yates
+from shuffle_core import gen_2_wise_ind_perm
+from shuffle_core import io_shuffle
 
 
 REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
