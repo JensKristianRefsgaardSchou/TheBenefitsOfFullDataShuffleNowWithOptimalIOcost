@@ -1,3 +1,4 @@
+import argparse
 import csv
 import math
 import multiprocessing as mp
@@ -11,6 +12,9 @@ from shuffle_functions import fisher_yates
 from shuffle_functions import gen_2_wise_ind_perm
 from shuffle_functions import io_shuffle
 
+
+REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
+DEFAULT_TABLE_CSV = os.path.join(REPO_ROOT, "twoWiseExp_counts_B400.csv")
 
 PAPER_ALGORITHM_NAMES = [
     "Gen-2-Wise-Ind-Perm",
@@ -212,8 +216,36 @@ def twoWiseExp(
     print_twoWiseExp_results(csv_path, reorganized_path=reorganized_path, n=n, B=B)
 
 
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--N", type=int, default=16000057)
+    parser.add_argument("--B", type=int, default=400)
+    parser.add_argument("--reps", type=int, default=250)
+    parser.add_argument("--processes", type=int, default=os.cpu_count() or 4)
+    parser.add_argument("--workers-per-func", type=int, default=4)
+    parser.add_argument("--checkpoint-every", type=int, default=100)
+    parser.add_argument("--write-every", type=int, default=5)
+    parser.add_argument("--csv", default=DEFAULT_TABLE_CSV)
+    parser.add_argument("--reset-csv", action="store_true")
+    parser.add_argument("--print-only", action="store_true")
+    args = parser.parse_args()
+
+    if args.print_only:
+        print_twoWiseExp_results(args.csv, n=args.N, B=args.B)
+        return
+
+    twoWiseExp(
+        n=args.N,
+        B=args.B,
+        reps=args.reps,
+        processes=args.processes,
+        workers_per_func=args.workers_per_func,
+        checkpoint_every=args.checkpoint_every,
+        write_every=args.write_every,
+        csv_path=args.csv,
+        reset_csv=args.reset_csv,
+    )
+
+
 if __name__ == "__main__":
-    N = 16000057
-    B = 400
-    file = os.path.join(os.path.dirname(__file__), "twoWiseExp_counts_B400.csv")
-    print_twoWiseExp_results(file, n=N, B=B)
+    main()
