@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+cpp/shuffle_core.dll
+cpp/shuffle_core.so
+cpp/shuffle_core.dylib
+*_smoke.csv
+new_counts.csv
+twoWiseExp_counts_cpp.csv

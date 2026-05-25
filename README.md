@@ -49,6 +49,12 @@ available, then run:
 python main.py cpp --N 10007 --B 14 --reps 10 --reset-csv
 ```
 
+To run sanity checks for both implementations:
+
+```powershell
+python -B sanity_test.py
+```
+
 Implemented algorithms:
 
 - `Gen-2-Wise-Ind-Perm` from Algorithm 1
