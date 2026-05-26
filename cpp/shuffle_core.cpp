@@ -39,7 +39,7 @@ static void shuffle_blocks(std::vector<std::vector<int>>& blocks) {
 
 
 // Implementation of Algorithm 2, IO Shuffle.
-static void shotgun_shuffle_ext(int* data, int N, int B, int rounds) {
+static void io_shuffle(int* data, int N, int B, int rounds) {
     if (N == 0) return;
     std::vector<int> buf(N);
 
@@ -80,7 +80,7 @@ static void shotgun_shuffle_ext(int* data, int N, int B, int rounds) {
 
 
 // The one-round CorgiPile baseline used in the paper comparison.
-static void corgi_pile_jk(int* data, int N, int B) {
+static void corgi_pile(int* data, int N, int B) {
     if (N == 0) return;
     int num_blocks = (N + B - 1) / B;
 
@@ -238,9 +238,9 @@ EXPORT void run_worker(int func_id, int N, int B, int reps, long long* out_count
 
         switch (func_id) {
             case 0: gen_2_wise_ind_perm(X.data(), N, B);       break;
-            case 1: shotgun_shuffle_ext(X.data(), N, B, 1);    break;
-            case 2: shotgun_shuffle_ext(X.data(), N, B, 2);    break;
-            case 3: corgi_pile_jk(X.data(), N, B);             break;
+            case 1: io_shuffle(X.data(), N, B, 1);             break;
+            case 2: io_shuffle(X.data(), N, B, 2);             break;
+            case 3: corgi_pile(X.data(), N, B);                break;
             case 4: fisher_yates(X.data(), N);                 break;
         }
 
@@ -254,9 +254,9 @@ EXPORT void run_single_shuffle(int func_id, int N, int B, int* out) {
     std::iota(out, out + N, 0);
     switch (func_id) {
         case 0: gen_2_wise_ind_perm(out, N, B);       break;
-        case 1: shotgun_shuffle_ext(out, N, B, 1);    break;
-        case 2: shotgun_shuffle_ext(out, N, B, 2);    break;
-        case 3: corgi_pile_jk(out, N, B);             break;
+        case 1: io_shuffle(out, N, B, 1);             break;
+        case 2: io_shuffle(out, N, B, 2);             break;
+        case 3: corgi_pile(out, N, B);                break;
         case 4: fisher_yates(out, N);                 break;
     }
 }
