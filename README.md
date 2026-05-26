@@ -59,6 +59,5 @@ Implemented algorithms:
 
 - `Gen-2-Wise-Ind-Perm` from Algorithm 1
 - `IO Shuffle` from Algorithm 2, for one or two rounds
-- `CorgiPile` shuffle algorithm of Xu et al: https://doi.
-org/10.1007/s00778-024-00845-0
+- `CorgiPile` shuffle algorithm of Xu et al: https://doi.org/10.1007/s00778-024-00845-0
 - `Fisher-Yates` uniform shuffle baseline
