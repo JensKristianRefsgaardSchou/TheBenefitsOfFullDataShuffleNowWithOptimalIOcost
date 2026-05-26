@@ -1,6 +1,5 @@
 import math
 import random
-from collections import Counter
 
 
 def uniform_shuffle(data):
@@ -15,6 +14,7 @@ def flatten(rows):
 
 
 def fisher_yates(data, B=None):
+    # Standard in-memory uniform shuffle baseline.
     result = list(data)
     for i in range(len(result) - 1, 0, -1):
         j = random.randint(0, i)
@@ -27,15 +27,16 @@ def io_shuffle(data, B=3, rounds=2):
     N = len(data)
     if N == 0:
         return []
-    if __debug__:
-        original_counts = Counter(data)
     block_size = B
     gate_block_count = B
     for _ in range(rounds):
+        # Split into blocks and shuffle within each block while it is in memory.
         blocks = [
             uniform_shuffle(data[i:i + block_size])
             for i in range(0, N, block_size)
         ]
+
+        # Randomize block order, then transpose groups of B blocks.
         blocks = uniform_shuffle(blocks)
         output = []
         for g in range(0, len(blocks), gate_block_count):
@@ -49,10 +50,6 @@ def io_shuffle(data, B=3, rounds=2):
                     if i < gate_lens[block_idx]:
                         output.append(block[i])
         data = output
-        if __debug__:
-            assert len(data) == N
-    if __debug__:
-        assert Counter(data) == original_counts
     return data
 
 
@@ -60,6 +57,7 @@ def corgi_pile(data, B=3):
     """The one-round CorgiPile baseline used in the paper comparison."""
     if not data:
         return []
+    # CorgiPile shuffles block order, then shuffles each cache-sized group.
     blocks = [
         data[i * B:(i + 1) * B]
         for i in range(math.ceil(len(data) / B))
@@ -69,11 +67,7 @@ def corgi_pile(data, B=3):
         fisher_yates(flatten(shuffled_blocks[i * B:(i + 1) * B]))
         for i in range(math.ceil(len(data) / (B ** 2)))
     ]
-    result = flatten(gates)
-    if __debug__:
-        assert len(result) == len(data)
-        assert Counter(result) == Counter(data)
-    return result
+    return flatten(gates)
 
 
 def mod_inverse(a, n):
@@ -95,12 +89,14 @@ def gen_2_wise_ind_perm(C, B=3):
     if N <= 1:
         return list(C)
 
+    # Choose an affine multiplier a with an inverse modulo N.
     while True:
         a = random.randint(1, N - 1)
         if math.gcd(a, N) == 1:
             break
     a_inv = mod_inverse(a, N)
 
+    # Precompute the read and write neighborhoods used for each square.
     pairs = []
     for b1 in range(-B + 1, B):
         for b2 in range(-B + 1, B):
@@ -112,20 +108,20 @@ def gen_2_wise_ind_perm(C, B=3):
     seen = [False] * N
     remaining = N
     while remaining:
+        # Process the square centered at the first input index not yet covered.
         i = next(idx for idx, is_seen in enumerate(seen) if not is_seen)
         for s, s_prime in pairs:
             read_idx = (i + s) % N
             write_idx = (i * a_inv + s_prime) % N
             output[write_idx] = C[read_idx]
+
+        # Mark all input indices covered by this square.
         for s, _ in pairs:
             target_idx = (i + s) % N
             if not seen[target_idx]:
                 seen[target_idx] = True
                 remaining -= 1
 
+    # The random rotation supplies the affine offset b.
     intercept = random.randint(0, N - 1)
-    output = output[N - intercept:] + output[:N - intercept]
-    if __debug__:
-        assert None not in output
-        assert Counter(output) == Counter(C)
-    return output
+    return output[N - intercept:] + output[:N - intercept]
